@@ -6,9 +6,15 @@ import {
   Select,
   Stack,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useState } from "react";
 
 const Home: React.FC = () => {
+  const [selectedValue, setSelectedValue] = useState<string>("");
+
+  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedValue(event.target.value);
+  };
+
   return (
     <Container>
       <Box
@@ -20,7 +26,12 @@ const Home: React.FC = () => {
         flexDir="column"
       >
         <Heading>Scorekeeper</Heading>
-        <Select placeholder="Choose game" margin="24px 0 0">
+        <Select
+          placeholder="Choose game"
+          margin="24px 0 0"
+          value={selectedValue}
+          onChange={handleSelectChange}
+        >
           <option value="mexican-train-game">Mexican Train Game</option>
         </Select>
         <Stack direction="row" spacing={4} align="center" margin="16px 0">
