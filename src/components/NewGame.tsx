@@ -1,4 +1,4 @@
-import { AddIcon, QuestionIcon } from "@chakra-ui/icons";
+import { AddIcon, CloseIcon, QuestionIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -6,6 +6,8 @@ import {
   Heading,
   IconButton,
   Input,
+  InputGroup,
+  InputRightElement,
   Popover,
   PopoverBody,
   PopoverCloseButton,
@@ -97,14 +99,24 @@ const NewGame: React.FC = () => {
               Players
             </Heading>
             {players.map((player, index) => (
-              <Input
-                key={index}
-                type="text"
-                placeholder="Player name"
-                value={player}
-                onChange={(e) => handleInputChange(index, e.target.value)}
-                mb={3}
-              />
+              <InputGroup key={index}>
+                <Input
+                  type="text"
+                  placeholder="Player name"
+                  value={player}
+                  onChange={(e) => handleInputChange(index, e.target.value)}
+                  mb={3}
+                />
+                <InputRightElement>
+                  <CloseIcon
+                    onClick={() => {
+                      const updatedPlayers = [...players];
+                      updatedPlayers.splice(index, 1);
+                      setPlayers(updatedPlayers);
+                    }}
+                  />
+                </InputRightElement>
+              </InputGroup>
             ))}
             <Box display="flex" justifyContent="flex-end">
               <IconButton
