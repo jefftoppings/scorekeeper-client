@@ -54,17 +54,14 @@ const NewGame: React.FC = () => {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
-    console.log("Submitted:", { readableId, players });
+    // TODO update this once app complete
+    const url = "http://localhost:8000/mexican-train";
 
-    // TODO test this out, add loading state/response handling
-    const url = "/mexican-train";
+    const queryString = `readableId=${encodeURIComponent(readableId)}&${players
+      .map((player) => `players%5B%5D=${encodeURIComponent(player)}`)
+      .join("&")}`;
 
-    const queryParams = new URLSearchParams({
-      readableId: String(readableId),
-      players: JSON.stringify(players),
-    });
-
-    const response = await fetch(`${url}?${queryParams}`, {
+    const response = await fetch(`${url}?${queryString}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
