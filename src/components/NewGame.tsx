@@ -1,4 +1,4 @@
-import { QuestionIcon } from "@chakra-ui/icons";
+import { AddIcon, QuestionIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -37,7 +37,17 @@ const NewGame: React.FC = () => {
   };
 
   const [readableId, setReadableId] = useState(generateRandomGameId());
-  const [players, setPlayers] = useState([]);
+  const [players, setPlayers] = useState<string[]>(["", ""]);
+
+  const handleInputChange = (index: number, value: string) => {
+    const updatedPlayers = [...players];
+    updatedPlayers[index] = value;
+    setPlayers(updatedPlayers);
+  };
+
+  const handleAddPlayer = () => {
+    setPlayers([...players, ""]);
+  };
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
@@ -86,16 +96,36 @@ const NewGame: React.FC = () => {
             <Heading as="h4" size="sm" margin="16px 0">
               Players
             </Heading>
-            <Input
-              type="text"
-              placeholder="Player names"
-              value={players.join(",")}
-              onChange={(e: any) => setPlayers(e.target.value.split(","))}
-              mb={3}
-            />
+            {players.map((player, index) => (
+              <Input
+                key={index}
+                type="text"
+                placeholder="Player name"
+                value={player}
+                onChange={(e) => handleInputChange(index, e.target.value)}
+                mb={3}
+              />
+            ))}
+            <Box display="flex" justifyContent="flex-end">
+              <IconButton
+                isRound={true}
+                variant="outline"
+                colorScheme="white"
+                aria-label="Add player"
+                fontSize="16px"
+                icon={<AddIcon />}
+                onClick={handleAddPlayer}
+              />
+            </Box>
 
-            <Button type="submit" colorScheme="teal">
-              Submit
+            <Button
+              type="submit"
+              colorScheme="teal"
+              isDisabled={
+                !readableId || !players.every(Boolean) || players.length < 2
+              }
+            >
+              Start
             </Button>
           </form>
         </Container>
