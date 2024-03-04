@@ -15,6 +15,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
+import { generate } from "random-words";
 
 const NewGame: React.FC = () => {
   const location = useLocation();
@@ -30,7 +31,12 @@ const NewGame: React.FC = () => {
     }
   };
   const displayId = getDisplayId(gameId);
-  const [readableId, setReadableId] = useState("");
+
+  const generateRandomGameId = (): string => {
+    return generate({ exactly: 2, join: "-" });
+  };
+
+  const [readableId, setReadableId] = useState(generateRandomGameId());
   const [players, setPlayers] = useState([]);
 
   const handleSubmit = (e: any) => {
@@ -73,6 +79,9 @@ const NewGame: React.FC = () => {
               onChange={(e) => setReadableId(e.target.value)}
               mb={3}
             />
+            <a onClick={() => setReadableId(generateRandomGameId())}>
+              Generate new Game ID
+            </a>
 
             <Heading as="h4" size="sm" margin="16px 0">
               Players
