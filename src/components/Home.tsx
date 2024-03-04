@@ -7,12 +7,22 @@ import {
   Stack,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Home: React.FC = () => {
   const [selectedValue, setSelectedValue] = useState<string>("");
+  const navigate = useNavigate();
 
   const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedValue(event.target.value);
+  };
+
+  const handleNewGameClick = () => {
+    navigate(`/new-game?gameId=${selectedValue}`);
+  };
+
+  const handleContinueClick = () => {
+    navigate(`/continue?gameId=${selectedValue}`);
   };
 
   return (
@@ -35,10 +45,20 @@ const Home: React.FC = () => {
           <option value="mexican-train-game">Mexican Train Game</option>
         </Select>
         <Stack direction="row" spacing={4} align="center" margin="16px 0">
-          <Button colorScheme="teal" variant="solid">
+          <Button
+            colorScheme="teal"
+            variant="solid"
+            isDisabled={!selectedValue}
+            onClick={handleNewGameClick}
+          >
             New Game
           </Button>
-          <Button colorScheme="teal" variant="solid">
+          <Button
+            colorScheme="teal"
+            variant="solid"
+            isDisabled={!selectedValue}
+            onClick={handleContinueClick}
+          >
             Continue
           </Button>
         </Stack>
