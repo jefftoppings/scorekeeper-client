@@ -1,0 +1,2 @@
+export const SET_GAME_CONFIG = 'SET_GAME_CONFIG';
+export const GET_GAME_CONFIG = 'GET_GAME_CONFIG';

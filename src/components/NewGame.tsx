@@ -18,10 +18,14 @@ import {
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { generate } from "random-words";
+import { useDispatch } from "react-redux";
+import { setGameConfig } from "../redux/actions";
+import { MexicanTrainGameConfig } from "../redux/types";
 
 const NewGame: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const queryParams = new URLSearchParams(location.search);
   const gameId = queryParams.get("gameId");
 
@@ -78,6 +82,15 @@ const NewGame: React.FC = () => {
     const data = await response.json();
     console.log(data);
     const id = data.id;
+
+    // set data in redux store
+    switch (gameId) {
+      case "mexican-train-game":
+        dispatch(setGameConfig(data as MexicanTrainGameConfig));
+        break;
+      default:
+        break;
+    }
 
     // Redirect to the game page with the gameId
     navigate(`/${gameId}/${id}`);
