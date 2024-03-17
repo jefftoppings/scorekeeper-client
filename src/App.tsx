@@ -4,7 +4,7 @@ import Home from "./components/Home";
 import NewGame from "./components/NewGame";
 import { Box, ChakraProvider } from "@chakra-ui/react";
 import theme from "./theme";
-import Game from "./components/Game";
+import MexicanTrainGame from "./components/mexican-train/MexicanTrainGame";
 
 const App: React.FC = () => {
   return (
@@ -14,7 +14,7 @@ const App: React.FC = () => {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/new-game" element={<NewGame />} />
-            <Route path="/game/:gameId" element={<Game />} />
+            <Route path="/mexican-train-game/:gameId" element={<MexicanTrainGame />} />
           </Routes>
         </Router>
       </Box>

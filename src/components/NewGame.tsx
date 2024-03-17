@@ -77,10 +77,10 @@ const NewGame: React.FC = () => {
 
     const data = await response.json();
     console.log(data);
-    const gameId = data.id;
+    const id = data.id;
 
     // Redirect to the game page with the gameId
-    navigate(`/game/${gameId}`);
+    navigate(`/${gameId}/${id}`);
   };
 
   return (

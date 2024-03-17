@@ -1,7 +1,7 @@
 import { Box, Container, Heading } from "@chakra-ui/react";
 import { useParams } from "react-router-dom";
 
-const Game: React.FC = () => {
+const MexicanTrainGame: React.FC = () => {
   const { gameId } = useParams<{ gameId: string }>();
   console.log({ gameId });
 
@@ -23,4 +23,4 @@ const Game: React.FC = () => {
   );
 };
 
-export default Game;
+export default MexicanTrainGame;
