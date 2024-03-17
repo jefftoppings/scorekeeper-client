@@ -1,7 +1,11 @@
 import {
   Box,
+  Button,
+  Center,
   Container,
   Heading,
+  Input,
+  InputGroup,
   Spinner,
   Table,
   TableContainer,
@@ -12,7 +16,7 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { MexicanTrainGameConfig } from "../../redux/types";
@@ -23,6 +27,9 @@ const MexicanTrainGame: React.FC = () => {
   const { gameId } = useParams<{ gameId: string }>();
   const dispatch = useDispatch();
   const gameConfig = useSelector((state: any) => state.game.gameConfig);
+  const [newRoundScores, setNewRoundScores] = useState<number[] | undefined>(
+    undefined
+  );
 
   useEffect(() => {
     console.log({ gameConfig });
@@ -108,6 +115,18 @@ const MexicanTrainGame: React.FC = () => {
     );
   }
 
+  const handleNewRoundScoreChange = (index: number, value: number) => {
+    const updatedScores = newRoundScores
+      ? [...newRoundScores]
+      : new Array(gameConfig?.players.length);
+    updatedScores[index] = value;
+    setNewRoundScores(updatedScores);
+  };
+
+  const handleEnterScoresClick = () => {
+    console.log("Enter scores clicked", newRoundScores);
+  };
+
   return (
     <Container>
       <Box
@@ -143,6 +162,42 @@ const MexicanTrainGame: React.FC = () => {
                 <Tbody>{renderScores(gameConfig)}</Tbody>
               </Table>
             </TableContainer>
+
+            {/* New round score input */}
+            <Container marginTop="16px">
+              {gameConfig.players.map(
+                (player: string | undefined, index: number) => (
+                  <InputGroup key={index}>
+                    <Container
+                      className={styles.fullWidthCenter}
+                      margin="8px 0"
+                    >
+                      <Text size="xs" marginRight="8px">
+                        {player}
+                      </Text>
+                      <Input
+                        type="number"
+                        onChange={(e) =>
+                          handleNewRoundScoreChange(
+                            index,
+                            parseInt(e.target.value)
+                          )
+                        }
+                        mb={3}
+                      />
+                    </Container>
+                  </InputGroup>
+                )
+              )}
+              <Center w="100%">
+                <Button
+                  colorScheme="teal"
+                  onClick={() => handleEnterScoresClick()}
+                >
+                  Enter Scores
+                </Button>
+              </Center>
+            </Container>
           </>
         ) : (
           <Spinner thickness="4px" speed="1.2s" color="teal" size="xl" />
