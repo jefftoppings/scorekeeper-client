@@ -1,5 +1,5 @@
-import { Box, Container, Heading } from "@chakra-ui/react";
-import { useEffect } from "react";
+import { Box, Container, Heading, Spinner, Text } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { MexicanTrainGameConfig } from "../../redux/types";
@@ -7,22 +7,21 @@ import { setGameConfig } from "../../redux/actions";
 
 const MexicanTrainGame: React.FC = () => {
   const { gameId } = useParams<{ gameId: string }>();
-  console.log({ gameId });
   const dispatch = useDispatch();
   const gameConfig = useSelector((state: any) => state.game.gameConfig);
 
   useEffect(() => {
     console.log({ gameConfig });
     if (!gameConfig) {
-      fetchDataFromAPI();
+      fetchGameDataFromApi();
     }
   }, [gameConfig]);
 
-  const fetchDataFromAPI = async () => {
-    console.log("fetchDataFromAPI");
+  const fetchGameDataFromApi = async () => {
     try {
       // Make API call to fetch data
       const response = await fetch(
+        // TODO update this once app complete
         `http://localhost:8000/mexican-train?id=${gameId}`,
         {
           method: "GET",
@@ -43,6 +42,19 @@ const MexicanTrainGame: React.FC = () => {
     }
   };
 
+  const formatDate = (dateString: string): string => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const seconds = String(date.getSeconds()).padStart(2, "0");
+    const formattedDate = `${year}-${month}-${day}`;
+    const formattedTime = `${hours}:${minutes}:${seconds}`;
+    return [formattedDate, formattedTime].join(" ");
+  };
+
   return (
     <Container>
       <Box
@@ -53,9 +65,14 @@ const MexicanTrainGame: React.FC = () => {
         alignItems="center"
         flexDir="column"
       >
-        <Heading>Game</Heading>
-
-        {/* Game content goes here */}
+        {gameConfig ? (
+          <>
+            <Heading as="h3">{gameConfig.readableId}</Heading>
+            <Text fontSize="sm">{formatDate(gameConfig.created)}</Text>
+          </>
+        ) : (
+          <Spinner thickness="4px" speed="1.2s" color="teal" size="xl" />
+        )}
       </Box>
     </Container>
   );
