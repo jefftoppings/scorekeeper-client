@@ -1,10 +1,10 @@
 export interface MexicanTrainGameConfig {
-  id?: string;
-  readableId?: string;
-  created?: Date;
-  players?: string[];
-  currentRound?: number;
-  scores?: ScoresByPlayer;
+  id: string;
+  readableId: string;
+  created: Date;
+  players: string[];
+  currentRound: number;
+  scores: ScoresByPlayer;
 }
 
 export interface ScoresByPlayer {
@@ -13,5 +13,6 @@ export interface ScoresByPlayer {
 
 export interface RoundScore {
   round: number;
-  total: number;
+  total?: number;
+  score?: number;
 }
