@@ -16,11 +16,12 @@ import {
   PopoverTrigger,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { generate } from "random-words";
 
 const NewGame: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
   const gameId = queryParams.get("gameId");
 
@@ -76,7 +77,10 @@ const NewGame: React.FC = () => {
 
     const data = await response.json();
     console.log(data);
-    return data;
+    const gameId = data.id;
+
+    // Redirect to the game page with the gameId
+    navigate(`/game/${gameId}`);
   };
 
   return (
