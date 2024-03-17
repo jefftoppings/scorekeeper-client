@@ -1,9 +1,23 @@
-import { Box, Container, Heading, Spinner, Text } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import {
+  Box,
+  Container,
+  Heading,
+  Spinner,
+  Table,
+  TableContainer,
+  Tbody,
+  Td,
+  Text,
+  Th,
+  Thead,
+  Tr,
+} from "@chakra-ui/react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { MexicanTrainGameConfig } from "../../redux/types";
 import { setGameConfig } from "../../redux/actions";
+import styles from "./MexicanTrainGame.module.css";
 
 const MexicanTrainGame: React.FC = () => {
   const { gameId } = useParams<{ gameId: string }>();
@@ -55,6 +69,45 @@ const MexicanTrainGame: React.FC = () => {
     return [formattedDate, formattedTime].join(" ");
   };
 
+  function renderScores(config: MexicanTrainGameConfig): React.ReactNode {
+    if (!config.scores || Object.entries(config.scores).length === 0) {
+      return <></>;
+    }
+    const data: Map<number, (number | undefined)[]> = new Map();
+    Object.entries(config.scores).forEach(([player, scores]) => {
+      data.set(
+        config.players.indexOf(player),
+        scores.map((s) => s.score)
+      );
+    });
+    const fillArray = (x: number) => {
+      const result = [];
+      for (let i = 1; i <= x; i++) {
+        result.push(i);
+      }
+      return result;
+    };
+    return (
+      <>
+        {fillArray(config.currentRound).map((i) => {
+          const tableRow = (
+            <Tr key={i}>
+              {config.players.map((player) => {
+                const score = data.get(config.players.indexOf(player))?.[i - 1];
+                return (
+                  <Td key={player} isNumeric className={styles.centerText}>
+                    {score}
+                  </Td>
+                );
+              })}
+            </Tr>
+          );
+          return tableRow;
+        })}
+      </>
+    );
+  }
+
   return (
     <Container>
       <Box
@@ -69,6 +122,27 @@ const MexicanTrainGame: React.FC = () => {
           <>
             <Heading as="h3">{gameConfig.readableId}</Heading>
             <Text fontSize="sm">{formatDate(gameConfig.created)}</Text>
+            <Text fontSize="md" margin="16px 0">
+              Current Round: {gameConfig.currentRound}
+            </Text>
+            <TableContainer>
+              <Table variant="simple" colorScheme="teal">
+                <Thead>
+                  <Tr>
+                    {gameConfig.players.map((player: string) => (
+                      <Th
+                        key={player}
+                        color="teal"
+                        className={styles.centerText}
+                      >
+                        {player}
+                      </Th>
+                    ))}
+                  </Tr>
+                </Thead>
+                <Tbody>{renderScores(gameConfig)}</Tbody>
+              </Table>
+            </TableContainer>
           </>
         ) : (
           <Spinner thickness="4px" speed="1.2s" color="teal" size="xl" />
