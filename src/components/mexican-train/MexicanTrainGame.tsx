@@ -122,6 +122,7 @@ const MexicanTrainGame: React.FC = () => {
       : new Array(gameConfig?.players.length);
     updatedScores[index] = value;
     setNewRoundScores(updatedScores);
+    handleScoreValuesChange(index, value);
   };
 
   const updateScores = () => {
@@ -170,11 +171,22 @@ const MexicanTrainGame: React.FC = () => {
       await response.json();
       gameConfig.scores = updatedScores;
       await fetchGameDataFromApi();
-      
-      // TODO clear out the inputs
+      clearInputValues();
     } catch (error) {
       console.error("Error updating scores:", error);
     }
+  };
+
+  const [scoreValues, setScoreValues] = useState(
+    new Array(gameConfig?.players?.length).fill("")
+  );
+  const handleScoreValuesChange = (index: number, value: number) => {
+    const updatedScores = [...scoreValues];
+    updatedScores[index] = value;
+    setScoreValues(updatedScores);
+  };
+  const clearInputValues = () => {
+    setScoreValues(new Array(gameConfig.players.length).fill(""));
   };
 
   return (
@@ -232,6 +244,7 @@ const MexicanTrainGame: React.FC = () => {
                       </Text>
                       <Input
                         type="number"
+                        value={scoreValues[index]}
                         onChange={(e) =>
                           handleNewRoundScoreChange(
                             index,
