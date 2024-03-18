@@ -32,7 +32,6 @@ const MexicanTrainGame: React.FC = () => {
   );
 
   useEffect(() => {
-    console.log({ gameConfig });
     if (!gameConfig) {
       fetchGameDataFromApi();
     }
@@ -143,17 +142,16 @@ const MexicanTrainGame: React.FC = () => {
           ) + (newRoundScores[index] || 0),
       });
     });
-    console.log(scoresCopy);
     return scoresCopy;
   };
 
   const handleEnterScoresClick = async () => {
-    console.log("Enter scores clicked", newRoundScores);
     // TODO update url once app complete
     const url = "http://localhost:8000/mexican-train";
+    const updatedScores = updateScores();
     const queryParams = new URLSearchParams({
       id: gameConfig.id,
-      scores: JSON.stringify(updateScores()),
+      scores: JSON.stringify(updatedScores),
     });
 
     try {
@@ -169,9 +167,11 @@ const MexicanTrainGame: React.FC = () => {
       }
 
       // Handle successful response
-      const data = await response.json();
-      console.log("Scores updated successfully");
-      console.log(data);
+      await response.json();
+      gameConfig.scores = updatedScores;
+      await fetchGameDataFromApi();
+      
+      // TODO clear out the inputs
     } catch (error) {
       console.error("Error updating scores:", error);
     }
