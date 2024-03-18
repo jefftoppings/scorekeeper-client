@@ -84,12 +84,12 @@ const MexicanTrainGame: React.FC = () => {
     Object.entries(config.scores).forEach(([player, scores]) => {
       data.set(
         config.players.indexOf(player),
-        scores.map((s) => s.score)
+        scores.map((s) => s.total || s.score || 0)
       );
     });
     const fillArray = (x: number) => {
       const result = [];
-      for (let i = 1; i <= x; i++) {
+      for (let i = 1; i < x; i++) {
         result.push(i);
       }
       return result;
@@ -100,10 +100,12 @@ const MexicanTrainGame: React.FC = () => {
           const tableRow = (
             <Tr key={i}>
               {config.players.map((player) => {
-                const score = data.get(config.players.indexOf(player))?.[i - 1];
+                const scoreToDisplay = data.get(
+                  config.players.indexOf(player)
+                )?.[i - 1];
                 return (
                   <Td key={player} isNumeric className={styles.centerText}>
-                    {score}
+                    {scoreToDisplay}
                   </Td>
                 );
               })}
@@ -123,8 +125,56 @@ const MexicanTrainGame: React.FC = () => {
     setNewRoundScores(updatedScores);
   };
 
-  const handleEnterScoresClick = () => {
+  const updateScores = () => {
+    if (!newRoundScores) {
+      return;
+    }
+    const scoresCopy = { ...gameConfig.scores };
+    const players: string[] = gameConfig.players;
+    players.forEach((player, index) => {
+      if (!scoresCopy[player]) scoresCopy[player] = [];
+      scoresCopy[player].push({
+        round: gameConfig.currentRound,
+        score: newRoundScores[index],
+        total:
+          scoresCopy[player].reduce(
+            (a: any, b: { score: any }) => a + (b.score || 0),
+            0
+          ) + (newRoundScores[index] || 0),
+      });
+    });
+    console.log(scoresCopy);
+    return scoresCopy;
+  };
+
+  const handleEnterScoresClick = async () => {
     console.log("Enter scores clicked", newRoundScores);
+    // TODO update url once app complete
+    const url = "http://localhost:8000/mexican-train";
+    const queryParams = new URLSearchParams({
+      id: gameConfig.id,
+      scores: JSON.stringify(updateScores()),
+    });
+
+    try {
+      const response = await fetch(`${url}?${queryParams.toString()}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update scores");
+      }
+
+      // Handle successful response
+      const data = await response.json();
+      console.log("Scores updated successfully");
+      console.log(data);
+    } catch (error) {
+      console.error("Error updating scores:", error);
+    }
   };
 
   return (
@@ -165,6 +215,11 @@ const MexicanTrainGame: React.FC = () => {
 
             {/* New round score input */}
             <Container marginTop="16px">
+              <Center marginBottom="8px">
+                <Text size="md">
+                  Points counted in round {gameConfig.currentRound}
+                </Text>
+              </Center>
               {gameConfig.players.map(
                 (player: string | undefined, index: number) => (
                   <InputGroup key={index}>
